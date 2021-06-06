@@ -9,7 +9,7 @@
 
 namespace pygalmesh {
 
-class DomainBase
+class DomainBase : std::enable_shared_from_this< DomainBase >
 {
   public:
 
@@ -29,6 +29,10 @@ class DomainBase
   {
     return {};
   };
+
+  //virtual
+  auto //Translate
+  __add__(const std::array<double, 3> & direction);
 };
 
 class Translate: public pygalmesh::DomainBase
@@ -101,6 +105,15 @@ class Translate: public pygalmesh::DomainBase
     const Eigen::Vector3d direction_;
     const std::vector<std::vector<std::array<double, 3>>> translated_features_;
 };
+
+
+// Add translation to DomainBase
+auto pygalmesh::DomainBase::__add__(const std::array<double, 3> & direction)
+{
+  auto shared = std::make_shared<const pygalmesh::DomainBase>(shared_from_this());
+  return Translate(shared, direction);
+};
+
 
 class Rotate: public pygalmesh::DomainBase
 {
